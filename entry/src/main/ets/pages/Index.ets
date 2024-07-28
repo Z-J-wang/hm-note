@@ -1,15 +1,27 @@
 import { Item, NoteData } from '../components/Item';
 import { NoteBook } from '../model';
+import { MockSetup } from '@ohos/hamock';
+import KvmUtil from '../utils/KvmUtil';
 
 @Entry
 @Component
 struct Index {
   @State message: string = 'Hello World';
   @State notebooks: NoteBook[] = [new NoteBook()]
-  @State notes: NoteData[] = [
-    new NoteData(1, '明天你好！'),
-    new NoteData(2, '明天你好！！！', new Date(), '', new NoteBook('book1', Color.Pink))
-  ]
+  @State notes: NoteData[] = []
+
+  // mock 数据
+  @MockSetup
+  createMoc6kData() {
+    this.notes = [
+      new NoteData(1, '明天你好！'),
+      new NoteData(2, '明天你好！！！', new Date(), '', new NoteBook('book1', Color.Pink))
+    ]
+  }
+
+  onPageShow(): void {
+    KvmUtil.getKey()
+  }
 
   /**
    * @Builder 自定义构建函数
