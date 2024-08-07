@@ -1,4 +1,4 @@
-import { Item, NoteData } from '../components/Item';
+import { NoteData } from '../components/Item';
 import { NoteBook } from '../model';
 import { MockSetup } from '@ohos/hamock';
 import KvmUtil from '../utils/KvmUtil';
@@ -9,6 +9,7 @@ struct Index {
   @State message: string = 'Hello World';
   @State notebooks: NoteBook[] = [new NoteBook()]
   @State notes: NoteData[] = []
+  @State value: string = ''
 
   // mock 数据
   @MockSetup
@@ -20,7 +21,15 @@ struct Index {
   }
 
   onPageShow(): void {
-    KvmUtil.getKey()
+    KvmUtil.put('aa', 'aa')
+    KvmUtil.put('bb', 'bb')
+    KvmUtil.put('aa', 'cc')
+    KvmUtil.getKey('bb').then(data => {
+      this.value = JSON.stringify(data)
+    })
+
+
+    KvmUtil.getAll()
   }
 
   /**
@@ -56,43 +65,47 @@ struct Index {
   }
 
   build() {
-    Stack({ alignContent: Alignment.BottomEnd }) {
-      Scroll() {
-        Column() {
-          List({ space: 10 }) {
-            ForEach(this.notes, (item: NoteData, index: number) => {
-              ListItem() {
-                Item({ data: item })
-              }.swipeAction({
-                end: {
-                  builder: () => {
-                    this.itemEnd(index)
-                  },
-                }
-              })
-            })
-          }
-        }
-        .alignItems(HorizontalAlign.Start)
-        .width('100%')
-        .height('100%')
-        .backgroundColor('#f5f5f5')
-        .padding(10)
-      }
+    // Stack({ alignContent: Alignment.BottomEnd }) {
+    //   Scroll() {
+    //     Column() {
+    //       List({ space: 10 }) {
+    //         ForEach(this.notes, (item: NoteData, index: number) => {
+    //           ListItem() {
+    //             Item({ data: item })
+    //           }.swipeAction({
+    //             end: {
+    //               builder: () => {
+    //                 this.itemEnd(index)
+    //               },
+    //             }
+    //           })
+    //         })
+    //       }
+    //     }
+    //     .alignItems(HorizontalAlign.Start)
+    //     .width('100%')
+    //     .height('100%')
+    //     .backgroundColor('#f5f5f5')
+    //     .padding(10)
+    //   }
+    //
+    //   Button({ type: ButtonType.Circle, stateEffect: true }) {
+    //     Text() {
+    //       SymbolSpan($r('sys.symbol.plus'))
+    //         .fontColor([Color.White])
+    //         .fontWeight(FontWeight.Bolder)
+    //         .fontSize(30)
+    //     }
+    //   }
+    //   .markAnchor({ x: 20, y: 50 })
+    //   .padding(16)
+    //   .backgroundColor(Color.Blue)
+    // }
+    // .width('100%')
+    // .height('100%')
 
-      Button({ type: ButtonType.Circle, stateEffect: true }) {
-        Text() {
-          SymbolSpan($r('sys.symbol.plus'))
-            .fontColor([Color.White])
-            .fontWeight(FontWeight.Bolder)
-            .fontSize(30)
-        }
-      }
-      .markAnchor({ x: 20, y: 50 })
-      .padding(16)
-      .backgroundColor(Color.Blue)
+    Column() {
+      Text(this.value)
     }
-    .width('100%')
-    .height('100%')
   }
 }
