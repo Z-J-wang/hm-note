@@ -3,7 +3,7 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { distributedKVStore } from '@kit.ArkData';
 import { BusinessError } from '@kit.BasicServicesKit';
-import KvmUtil from '../utils/KvmUtil';
+import KvmUtil from '../../utils/KvmUtil';
 
 /**
  * 创建KVManager实例并创建获取数据库

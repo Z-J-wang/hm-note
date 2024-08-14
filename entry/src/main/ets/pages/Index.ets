@@ -1,7 +1,7 @@
 import { NoteData } from '../components/Item';
 import { NoteBook } from '../model';
 import { MockSetup } from '@ohos/hamock';
-import KvmUtil from '../utils/KvmUtil';
+import KvmUtil from '../../utils/KvmUtil';
 
 @Entry
 @Component
