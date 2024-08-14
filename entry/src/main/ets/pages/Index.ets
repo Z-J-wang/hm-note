@@ -1,5 +1,5 @@
 import { NoteData } from '../components/Item';
-import { NoteBook } from '../model';
+import { Notebook } from '../../model';
 import { MockSetup } from '@ohos/hamock';
 import KvmUtil from '../../utils/KvmUtil';
 
@@ -7,7 +7,7 @@ import KvmUtil from '../../utils/KvmUtil';
 @Component
 struct Index {
   @State message: string = 'Hello World';
-  @State notebooks: NoteBook[] = [new NoteBook()]
+  @State notebooks: Notebook[] = [new Notebook()]
   @State notes: NoteData[] = []
   @State value: string = ''
 
@@ -16,7 +16,7 @@ struct Index {
   createMoc6kData() {
     this.notes = [
       new NoteData(1, '明天你好！'),
-      new NoteData(2, '明天你好！！！', new Date(), '', new NoteBook('book1', Color.Pink))
+      new NoteData(2, '明天你好！！！', new Date(), '', new Notebook('book1', Color.Pink))
     ]
   }
 

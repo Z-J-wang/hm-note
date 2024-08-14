@@ -1,4 +1,4 @@
-import { NoteBook } from '../model'
+import { Notebook } from '../../model'
 import { router } from '@kit.ArkUI'
 import { EditorParams } from '../pages/Editor'
 
@@ -8,14 +8,14 @@ export class NoteData {
   id: number | undefined = undefined
   title: string = ''
   content: string = 'Hello World!!'
-  notebook: NoteBook
+  notebook: Notebook
 
   constructor(id?: number, title?: string, dateTime: Date = new Date(), content: string = '',
-    notebook: NoteBook = new NoteBook()) {
+    notebook: Notebook = new Notebook()) {
     id && (this.id = id)
     title && (this.title = title)
     this._createdTime = dateTime
-    this.notebook = notebook || new NoteBook()
+    this.notebook = notebook || new Notebook()
     content && (this.content = content)
   }
 

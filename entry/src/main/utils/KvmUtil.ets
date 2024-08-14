@@ -56,7 +56,7 @@ export default class KvmUtil {
    * @param key
    * @returns { Promise<Uint8Array | string | number | boolean | BusinessError>}
    */
-  static getKey(key: string): Promise<Uint8Array | string | number | boolean | BusinessError> {
+  static getData(key: string): Promise<Uint8Array | string | number | boolean | BusinessError> {
     return KvmUtil.kvStore.get(KvmUtil.prefix + key).then((data: Uint8Array | string | number | boolean) => {
       return data
     }).catch((err: BusinessError) => {
