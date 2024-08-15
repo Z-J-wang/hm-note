@@ -6,8 +6,8 @@ export default class Notebooks {
   private _kvKey: string = 'notebook'
 
   constructor() {
-    this._getAll().then(async () => {
-      // 如果kv数据库不存在相关数据，则读取defaultNotebookList并存入数据库
+    this.getAll().then(async () => {
+      // 如果kv数据库不存在notebook数据，则初始化notebooks数据
       if (!this._notebooks.length) {
         this._init()
       }
@@ -18,10 +18,6 @@ export default class Notebooks {
 
   public get notebooks(): Notebook[] {
     return this._notebooks
-  }
-
-  public set notebooks(value: Notebook[]) {
-    this._notebooks = value
   }
 
   public async put(notebook: Notebook) {
@@ -47,7 +43,7 @@ export default class Notebooks {
     }
   }
 
-  private async _getAll() {
+  private async getAll() {
     try {
       const dataString = await KvmUtil.getData(this._kvKey)
       if (typeof dataString !== 'string') {
@@ -68,7 +64,8 @@ export default class Notebooks {
    * 初始化数据库的Notebooks
    */
   private async _init() {
+    // 读取defaultNotebookList并存入数据库
     const newNotebooks = DefaultNotebookList.defaultNotebookList
-    await KvmUtil.put(this._kvKey, JSON.stringify(newNotebooks)) // 更新数据到kvthis.notebooks = newNotebooks
+    await KvmUtil.put(this._kvKey, JSON.stringify(newNotebooks))
   }
 }
