@@ -1,5 +1,5 @@
-import { Notebook } from '../../model';
-import { DefaultNotebookList, KvmUtil } from '../../utils';
+import { Notebook } from '../model';
+import { DefaultNotebookList, KvmUtil } from '../utils';
 
 export default class Notebooks {
   // kv 的 key
@@ -43,7 +43,7 @@ export default class Notebooks {
     }
   }
 
-  private async getAll() {
+  public async getAll() {
     try {
       const dataString = await KvmUtil.getData(this._kvKey)
       if (typeof dataString !== 'string') {
@@ -56,7 +56,7 @@ export default class Notebooks {
       }
       return this._notebooks
     } catch (e) {
-      return false
+      return []
     }
   }
 

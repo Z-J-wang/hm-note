@@ -9,13 +9,13 @@ export default class Note {
   content: string
   notebook: Notebook
 
-  constructor(id: string, title: string, dateTime: Date = new Date(), content: string = '',
+  constructor(id: string, title: string, content: string, createdTime: Date,
     notebook: Notebook) {
     this.id = id
     this.title = title
-    this._createdTime = dateTime
-    this.notebook = notebook
     this.content = content
+    this._createdTime = createdTime
+    this.notebook = notebook
   }
 
   private _createdTime: Date
@@ -26,6 +26,10 @@ export default class Note {
    */
   public get createdTime(): Date {
     return this._createdTime
+  }
+
+  public set createdTime(createdTime: Date) {
+    this._createdTime = createdTime
   }
 
   /**
