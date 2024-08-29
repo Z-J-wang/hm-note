@@ -1,50 +1,80 @@
 /**
  * note 编辑器
  */
-import { NoteData } from '../components/Item'
-import { router } from '@kit.ArkUI'
+import { Note } from '../../model';
+import { router } from '@kit.ArkUI';
+import NoteBll from '../../bll/Note.bll';
 
 export interface EditorParams {
-  noteID: number
+  noteID: string
 }
 
 @Entry({ routeName: 'Editor' })
 @Component
 struct Editor {
-  @State noteID: number = 0
-  @State noteData: NoteData = new NoteData()
+  @State note: Note | null = null
   controller: RichEditorController = new RichEditorController();
 
-  onPageShow(): void {
+  async onPageShow() {
     const params: EditorParams = router.getParams() as EditorParams
     if (params.noteID) {
-      this.noteID = params.noteID
-      this.noteData = new NoteData(this.noteID, '明天你好！')
+      const result = await NoteBll.getNote(params.noteID)
+      console.log(params.noteID)
+      console.log('result', JSON.stringify(result))
+      if (result instanceof Note) {
+        this.note = result
+      } else {
+        // note 不存在重定向到首页
+        router.pushUrl({
+          url: "pages/Index"
+        })
+      }
+    } else {
+      router.pushUrl({
+        url: "pages/Index"
+      })
     }
   }
 
   build() {
     Column({ space: 10 }) {
-      Column() {
+      if (this.note !== null) {
         Column() {
-          TextInput({ placeholder: '标题' }).padding({ left: 0 })
-        }
+          Column() {
+            Button({ buttonStyle: ButtonStyleMode.TEXTUAL, role: ButtonRole.NORMAL }) {
+              Text() {
+                SymbolSpan($r('sys.symbol.arrow_left')).fontSize(16).fontWeight(FontWeight.Bold)
+              }
+            }.padding(6).margin({
+              left: -6
+            })
+            .onClick(() => {
+              router.back()
+            })
+          }
+
+          Column() {
+            TextInput({ placeholder: '标题', text: this.note.title })
+              .padding({ left: 0 })
+              .backgroundColor(Color.Transparent)
+          }
+
+          Column() {
+            Text(this.note.createdTimeByTime).fontSize(12).fontColor(Color.Gray)
+          }
+        }.padding(10).alignItems(HorizontalAlign.Start)
+
+        RichEditor({ controller: this.controller }).flexGrow(1).onReady(() => {
+          this.controller.addTextSpan((this.note as Note).content)
+        })
 
         Column() {
-          Text(this.noteData.createdTimeByTime).fontSize(12).fontColor(Color.Gray)
+          Text(`共 ${this.note.content.length} 字`).fontSize(12)
         }
-      }.padding(10).alignItems(HorizontalAlign.Start)
-
-      RichEditor({ controller: this.controller }).flexGrow(1).onReady(() => {
-        this.controller.addTextSpan(this.noteData.content)
-      })
-
-      Column() {
-        Text(`共 ${this.noteData.content.length} 字`).fontSize(12)
+        .padding({ bottom: 10, right: 10 })
+        .width('100%')
+        .alignItems(HorizontalAlign.End)
       }
-      .padding({ bottom: 10, right: 10 })
-      .width('100%')
-      .alignItems(HorizontalAlign.End)
     }.height('100%')
   }
 }

@@ -7,6 +7,7 @@ export default class Note {
   id: string
   title: string
   content: string
+  createdTime: Date
   notebook: Notebook
 
   constructor(id: string, title: string, content: string, createdTime: Date,
@@ -14,22 +15,8 @@ export default class Note {
     this.id = id
     this.title = title
     this.content = content
-    this._createdTime = createdTime
+    this.createdTime = createdTime
     this.notebook = notebook
-  }
-
-  private _createdTime: Date
-
-  /**
-   * 获取note创建更新时间
-   * @returns {Date}
-   */
-  public get createdTime(): Date {
-    return this._createdTime
-  }
-
-  public set createdTime(createdTime: Date) {
-    this._createdTime = createdTime
   }
 
   /**
@@ -37,7 +24,7 @@ export default class Note {
    * @returns {string} MM月DD日
    */
   public get createdTimeByDay(): string {
-    return `${this._createdTime.getMonth()}月${this._createdTime.getDay()}日`
+    return `${this.createdTime?.getMonth()}月${this.createdTime?.getDay()}日`
   }
 
   /**
@@ -45,7 +32,7 @@ export default class Note {
    * @returns {string} MM月DD日 hh:mm:ss
    */
   public get createdTimeByTime(): string {
-    return `${this._createdTime.getMonth()}月${this._createdTime.getDay()}日 ${this._createdTime.toLocaleTimeString([],
+    return `${this.createdTime?.getMonth()}月${this.createdTime?.getDay()}日 ${this.createdTime?.toLocaleTimeString([],
       {
         timeStyle: "short",
       })}`

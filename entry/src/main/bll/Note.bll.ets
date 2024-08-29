@@ -8,15 +8,17 @@ export default class NoteBll {
   private static _noteDal: NoteDal = new NoteDal()
   private static _defaultNotebook = DefaultNotebookList.defaultNotebookList[0]
 
-  static getAll(): Promise<Note[]> {
-    return NoteBll._noteDal.getAll()
+  static async getAll(): Promise<Note[]> {
+    const notes = await NoteBll._noteDal.getAll()
+
+    return notes
   }
 
-  static getNote(id: string): Note | undefined {
+  static getNote(id: string) {
     return NoteBll._noteDal.getNote(id)
   }
 
-  static delete(id: string): Promise<Note[] | boolean> {
+  static delete(id: string): Promise<Note[] | boolean | ErrorMessage> {
     if (NoteBll._noteDal.notes.findIndex(note => note.id === id) === -1) {
       Promise.reject({
         status: false,
@@ -28,7 +30,7 @@ export default class NoteBll {
   }
 
   static async add(title: string, content: string,
-    notebook: NoteBook = this._defaultNotebook): Promise<Note[] | boolean> {
+    notebook: NoteBook = NoteBll._defaultNotebook): Promise<Note[] | boolean> {
     // notes 为空，则先从数据库读取数据
     if (NoteBll._noteDal.notes.length === 0) {
       await NoteBll.getAll()

@@ -1,35 +1,24 @@
-import { NoteData } from '../components/Item';
-import { Notebook } from '../../model';
-import { MockSetup } from '@ohos/hamock';
-import KvmUtil from '../../utils/KvmUtil';
+import { Note, Notebook } from '../../model';
+import NoteBll from '../../bll/Note.bll';
+import NoteBookBll from '../../bll/Notebook.bll';
+import { Item } from '../components/Item';
 
 @Entry
 @Component
 struct Index {
   @State message: string = 'Hello World';
-  @State notebooks: Notebook[] = [new Notebook()]
-  @State notes: NoteData[] = []
+  @State notebooks: Notebook[] = []
+  @State notes: Note[] = []
   @State value: string = ''
 
-  // mock 数据
-  @MockSetup
-  createMoc6kData() {
-    this.notes = [
-      new NoteData(1, '明天你好！'),
-      new NoteData(2, '明天你好！！！', new Date(), '', new Notebook('book1', Color.Pink))
-    ]
-  }
-
   onPageShow(): void {
-    KvmUtil.put('aa', 'aa')
-    KvmUtil.put('bb', 'bb')
-    KvmUtil.put('aa', 'cc')
-    KvmUtil.getKey('bb').then(data => {
-      this.value = JSON.stringify(data)
+    NoteBll.getAll().then(notes => {
+      this.notes = notes
     })
 
-
-    KvmUtil.getAll()
+    NoteBookBll.getAll().then(notebooks => {
+      this.notebooks = notebooks
+    })
   }
 
   /**
@@ -65,47 +54,43 @@ struct Index {
   }
 
   build() {
-    // Stack({ alignContent: Alignment.BottomEnd }) {
-    //   Scroll() {
-    //     Column() {
-    //       List({ space: 10 }) {
-    //         ForEach(this.notes, (item: NoteData, index: number) => {
-    //           ListItem() {
-    //             Item({ data: item })
-    //           }.swipeAction({
-    //             end: {
-    //               builder: () => {
-    //                 this.itemEnd(index)
-    //               },
-    //             }
-    //           })
-    //         })
-    //       }
-    //     }
-    //     .alignItems(HorizontalAlign.Start)
-    //     .width('100%')
-    //     .height('100%')
-    //     .backgroundColor('#f5f5f5')
-    //     .padding(10)
-    //   }
-    //
-    //   Button({ type: ButtonType.Circle, stateEffect: true }) {
-    //     Text() {
-    //       SymbolSpan($r('sys.symbol.plus'))
-    //         .fontColor([Color.White])
-    //         .fontWeight(FontWeight.Bolder)
-    //         .fontSize(30)
-    //     }
-    //   }
-    //   .markAnchor({ x: 20, y: 50 })
-    //   .padding(16)
-    //   .backgroundColor(Color.Blue)
-    // }
-    // .width('100%')
-    // .height('100%')
+    Stack({ alignContent: Alignment.BottomEnd }) {
+      Scroll() {
+        Column() {
+          List({ space: 10 }) {
+            ForEach(this.notes, (note: Note, index: number) => {
+              ListItem() {
+                Item({ note: note })
+              }.swipeAction({
+                end: {
+                  builder: () => {
+                    this.itemEnd(index)
+                  },
+                }
+              })
+            })
+          }
+        }
+        .alignItems(HorizontalAlign.Start)
+        .width('100%')
+        .height('100%')
+        .backgroundColor('#f5f5f5')
+        .padding(10)
+      }
 
-    Column() {
-      Text(this.value)
+      Button({ type: ButtonType.Circle, stateEffect: true }) {
+        Text() {
+          SymbolSpan($r('sys.symbol.plus'))
+            .fontColor([Color.White])
+            .fontWeight(FontWeight.Bolder)
+            .fontSize(20)
+        }
+      }
+      .markAnchor({ x: 20, y: 50 })
+      .padding(10)
+      .backgroundColor(Color.Blue)
     }
+    .width('100%')
+    .height('100%')
   }
 }
