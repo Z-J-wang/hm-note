@@ -2,6 +2,7 @@ import { Note, Notebook } from '../../model';
 import NoteBll from '../../bll/Note.bll';
 import NoteBookBll from '../../bll/Notebook.bll';
 import { Item } from '../components/Item';
+import { router } from '@kit.ArkUI';
 
 @Entry
 @Component
@@ -27,7 +28,7 @@ struct Index {
    * @param index note 序号
    */
   @Builder
-  itemEnd(index: number) {
+  itemEnd(note: Note) {
     Row() {
       // 归纳按钮
       Button({ type: ButtonType.Circle, stateEffect: true }) {
@@ -38,7 +39,7 @@ struct Index {
       }.padding(6).backgroundColor('#5698c3').margin(4)
       .onClick(() => {
         // TODO 归纳相关逻辑，更新note数据
-        console.log(index.toString())
+        console.log(note.toString())
       })
 
       // 删除按钮
@@ -47,8 +48,13 @@ struct Index {
           SymbolSpan($r('sys.symbol.ohos_trash')).fontSize(20).fontWeight(FontWeight.Bold)
         }.fontColor(Color.White)
       }.padding(6).backgroundColor(Color.Red).margin(4)
-      .onClick(() => {
+      .onClick(async () => {
+        console.log(note.id.toString())
         // TODO 删除相关逻辑，更新note数据
+        await NoteBll.delete(note.id)
+        NoteBll.getAll().then(notes => {
+          this.notes = notes
+        })
       })
     }.padding(4).justifyContent(FlexAlign.SpaceEvenly)
   }
@@ -58,13 +64,13 @@ struct Index {
       Scroll() {
         Column() {
           List({ space: 10 }) {
-            ForEach(this.notes, (note: Note, index: number) => {
+            ForEach(this.notes, (note: Note) => {
               ListItem() {
                 Item({ note: note })
               }.swipeAction({
                 end: {
                   builder: () => {
-                    this.itemEnd(index)
+                    this.itemEnd(note)
                   },
                 }
               })
@@ -92,5 +98,10 @@ struct Index {
     }
     .width('100%')
     .height('100%')
+    .onClick(() => {
+      router.pushUrl({
+        url: 'pages/Editor'
+      })
+    })
   }
 }
