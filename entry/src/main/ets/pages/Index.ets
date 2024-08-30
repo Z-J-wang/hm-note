@@ -2,6 +2,7 @@ import { Note, Notebook } from '../../model';
 import NoteBll from '../../bll/Note.bll';
 import NoteBookBll from '../../bll/Notebook.bll';
 import { Item } from '../components/Item';
+import { router } from '@kit.ArkUI';
 
 @Entry
 @Component
@@ -92,5 +93,10 @@ struct Index {
     }
     .width('100%')
     .height('100%')
+    .onClick(() => {
+      router.pushUrl({
+        url: 'pages/Editor'
+      })
+    })
   }
 }
