@@ -18,9 +18,10 @@ struct Editor {
 
   // 页面离开，存储数据
   onPageHide(): void {
+
     if (this.note.id) {
       NoteBll.update(this.note)
-    } else if (this.note.title && this.note.content) {
+    } else {
       NoteBll.add(this.note.title, this.note.content, this.note.notebook)
     }
   }
