@@ -17,7 +17,6 @@ export default class NoteDal {
   }
 
   public getNote(id: string): Promise<Note | ErrorMessage> {
-    console.log(JSON.stringify(this._notes))
     if (this._notes.findIndex(note => note.id === id) === -1) {
       Promise.reject({
         status: false,
@@ -37,7 +36,6 @@ export default class NoteDal {
     newNotes.push(note)
     try {
       KvmUtil.put(this._kvKey, JSON.stringify(newNotes)) // kv数据库
-      console.log('newNotes', JSON.stringify(this._notes))
       this._notes = newNotes
       return newNotes
     } catch (e) {
@@ -104,6 +102,7 @@ export default class NoteDal {
           // 存储的数据类型错误，初始化数据库数据
           return []
         } else {
+          this._notes = []
           for (let item of JSON.parse(result) as Note[]) {
             const notebook = item.notebook as Notebook
             this._notes.push(new Note(item.id, item.title, item.content, new Date(item.createdTime),

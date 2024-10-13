@@ -21,7 +21,7 @@ struct Editor {
 
     if (this.note.id) {
       NoteBll.update(this.note)
-    } else {
+    } else if (this.note.title && this.note.content) {
       NoteBll.add(this.note.title, this.note.content, this.note.notebook)
     }
   }

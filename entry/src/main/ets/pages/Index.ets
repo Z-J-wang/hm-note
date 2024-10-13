@@ -39,7 +39,6 @@ struct Index {
       }.padding(6).backgroundColor('#5698c3').margin(4)
       .onClick(() => {
         // TODO 归纳相关逻辑，更新note数据
-        console.log(note.toString())
       })
 
       // 删除按钮
@@ -49,7 +48,6 @@ struct Index {
         }.fontColor(Color.White)
       }.padding(6).backgroundColor(Color.Red).margin(4)
       .onClick(async () => {
-        console.log(note.id.toString())
         // TODO 删除相关逻辑，更新note数据
         await NoteBll.delete(note.id)
         NoteBll.getAll().then(notes => {
@@ -95,13 +93,14 @@ struct Index {
       .markAnchor({ x: 20, y: 50 })
       .padding(10)
       .backgroundColor(Color.Blue)
+      .onClick(() => {
+        router.pushUrl({
+          url: 'pages/Editor'
+        })
+      })
+
     }
     .width('100%')
     .height('100%')
-    .onClick(() => {
-      router.pushUrl({
-        url: 'pages/Editor'
-      })
-    })
   }
 }
