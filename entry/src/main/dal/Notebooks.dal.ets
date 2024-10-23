@@ -46,6 +46,7 @@ export default class Notebooks {
   public async getAll() {
     try {
       const dataString = await KvmUtil.getData(this._kvKey)
+      this._notebooks = []
       if (typeof dataString !== 'string') {
         // 存储的数据类型错误，初始化数据库数据
         this._init()
