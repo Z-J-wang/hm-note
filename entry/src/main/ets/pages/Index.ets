@@ -51,7 +51,8 @@ struct Index {
       this.notebooks = notebooks
     })
 
-    this.dialogController.open()
+    // this.dialogController.open()
+
   }
 
   /**
@@ -71,9 +72,11 @@ struct Index {
       }.padding(6).backgroundColor('#5698c3').margin(4)
       .onClick(() => {
         // TODO 归纳相关逻辑
+        console.log('open notebooks')
 
         // 更新notebook数据
         NoteBookBll.getAll().then(notebooks => {
+          console.log('notebooks')
           this.notebooks = notebooks
           this.dialogController.open() // notebook数据更新后再打开NotebookSetting弹窗
         })

@@ -1,4 +1,6 @@
 import KvmUtil from './KvmUtil'
 import DefaultNotebookList from './DefaultNotebookList'
 
-export { KvmUtil, DefaultNotebookList }
+import NotebookColors from './NotebookColors'
+
+export { KvmUtil, DefaultNotebookList, NotebookColors }

@@ -1,6 +1,11 @@
 import { Notebook } from '../model';
 import { DefaultNotebookList, KvmUtil } from '../utils';
 
+interface NotebookInterface {
+  name: string,
+  color: string
+}
+
 export default class Notebooks {
   // kv 的 key
   private _kvKey: string = 'notebook'
@@ -24,7 +29,12 @@ export default class Notebooks {
     const newNotebooks = this._notebooks.slice() // 复制数组
     newNotebooks.push(notebook)
     try {
-      await KvmUtil.put(this._kvKey, JSON.stringify(this._notebooks)) // 更新数据到kvthis.notebooks = newNotebooks
+      await KvmUtil.put(this._kvKey, JSON.stringify(newNotebooks.map(notebook => {
+        return {
+          name: notebook.name,
+          color: notebook.color
+        } as NotebookInterface
+      }))) // 更新数据到kv
       this._notebooks = newNotebooks
       return newNotebooks
     } catch (e) {
@@ -35,7 +45,12 @@ export default class Notebooks {
   public async delete(name: string) {
     try {
       const newNotebooks = this._notebooks.filter(notebook => notebook.name !== name) // 过滤出要删除的notebook
-      await KvmUtil.put(this._kvKey, JSON.stringify(this._notebooks)) // 更新数据到kv
+      await KvmUtil.put(this._kvKey, JSON.stringify(newNotebooks.map(notebook => {
+        return {
+          name: notebook.name,
+          color: notebook.color
+        } as NotebookInterface
+      }))) // 更新数据到kv
       this._notebooks = newNotebooks // 覆盖_notebooks
       return newNotebooks
     } catch (e) {
@@ -67,6 +82,11 @@ export default class Notebooks {
   private async _init() {
     // 读取defaultNotebookList并存入数据库
     const newNotebooks = DefaultNotebookList.defaultNotebookList
-    await KvmUtil.put(this._kvKey, JSON.stringify(newNotebooks))
+    await KvmUtil.put(this._kvKey, JSON.stringify(newNotebooks.map(notebook => {
+      return {
+        name: notebook.name,
+        color: notebook.color
+      } as NotebookInterface
+    }))) // 更新数据到kv
   }
 }
