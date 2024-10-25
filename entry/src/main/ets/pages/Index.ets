@@ -21,12 +21,11 @@ struct Index {
         this.noteOfNotebookSetting = null // 取消归纳操作，重置noteOfNotebookSetting
       },
       confirm: (notebook: Notebook) => {
-        console.info('将note：' + JSON.stringify(this.noteOfNotebookSetting) + '的notebook设置为notebook:' +
-        JSON.stringify(notebook))
         if (this.noteOfNotebookSetting instanceof Note) {
           // noteOfNotebookSetting类型正确，更新数据
           this.noteOfNotebookSetting.notebook = notebook
           NoteBll.update(this.noteOfNotebookSetting).then(() => {
+            this.loadNote()
             this.noteOfNotebookSetting = null // 数据更新成功，重置noteOfNotebookSetting
           })
         } else {
@@ -42,17 +41,25 @@ struct Index {
     alignment: DialogAlignment.Bottom,
   })
 
-  onPageShow(): void {
-    NoteBll.getAll().then(notes => {
+  loadNote() {
+    this.notes = []
+    return NoteBll.getAll().then(notes => {
+      console.log(JSON.stringify(notes))
       this.notes = notes
     })
+  }
 
-    NoteBookBll.getAll().then(notebooks => {
+  loadNotebook() {
+    this.notebooks = []
+    return NoteBookBll.getAll().then(notebooks => {
       this.notebooks = notebooks
     })
+  }
 
-    // this.dialogController.open()
-
+  onPageShow(): void {
+    console.log('12')
+    this.loadNote()
+    this.loadNotebook()
   }
 
   /**
@@ -70,16 +77,12 @@ struct Index {
             .fontSize(20).fontWeight(FontWeight.Bold)
         }.fontColor(Color.White)
       }.padding(6).backgroundColor('#5698c3').margin(4)
-      .onClick(() => {
+      .onClick(async () => {
         // TODO 归纳相关逻辑
-        console.log('open notebooks')
-
         // 更新notebook数据
-        NoteBookBll.getAll().then(notebooks => {
-          console.log('notebooks')
-          this.notebooks = notebooks
-          this.dialogController.open() // notebook数据更新后再打开NotebookSetting弹窗
-        })
+        this.dialogController.open() // notebook数据更新后再打开NotebookSetting弹窗
+        await this.loadNotebook()
+        this.noteOfNotebookSetting = note
       })
 
       // 删除按钮

@@ -37,4 +37,22 @@ export default class Note {
         timeStyle: "short",
       })}`
   }
+
+  public toString(): string {
+    interface NoteBookToString {
+      name: string,
+      color: ResourceColor
+    }
+
+    return JSON.stringify({
+      id: this.id,
+      title: this.title,
+      content: this.content,
+      createdTime: this.createdTime,
+      notebook: {
+        name: this.notebook.name,
+        color: this.notebook.color
+      } as NoteBookToString
+    })
+  }
 }

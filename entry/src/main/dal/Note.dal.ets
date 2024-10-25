@@ -1,6 +1,7 @@
 import { ErrorMessage, Note, Notebook } from '../model';
-import { DefaultNotebookList, KvmUtil } from '../utils';
+import { DefaultNotebookList, KvmUtil, toStringList } from '../utils';
 import { BusinessError } from '@kit.BasicServicesKit';
+
 
 export default class NoteDal {
   // kv 的 key
@@ -35,7 +36,7 @@ export default class NoteDal {
     const newNotes = this._notes.slice() // 复制数组
     newNotes.push(note)
     try {
-      KvmUtil.put(this._kvKey, JSON.stringify(newNotes)) // kv数据库
+      KvmUtil.put(this._kvKey, toStringList(newNotes)) // kv数据库
       this._notes = newNotes
       return newNotes
     } catch (e) {
@@ -54,7 +55,7 @@ export default class NoteDal {
     const index = this._notes.findIndex(note => note.id === newNote.id)
     newNotes.splice(index, 1, newNote) // 替换指定元素
     try {
-      await KvmUtil.put(this._kvKey, JSON.stringify(this._notes)) // kv数据库
+      await KvmUtil.put(this._kvKey, toStringList(this._notes)) // kv数据库
       this._notes = newNotes
       return newNotes
     } catch (e) {
@@ -70,7 +71,7 @@ export default class NoteDal {
   public async delete(id: string) {
     try {
       const newNotes = this._notes.filter(note => note.id !== id) // 过滤出要删除的note
-      await KvmUtil.put(this._kvKey, JSON.stringify(newNotes)) // 更新数据到kv
+      await KvmUtil.put(this._kvKey, toStringList(newNotes)) // 更新数据到kv
       this._notes = newNotes // 覆盖_notes
       return newNotes
     } catch (e) {
@@ -103,9 +104,10 @@ export default class NoteDal {
           return []
         } else {
           this._notes = []
-          for (let item of JSON.parse(result) as Note[]) {
-            const notebook = item.notebook as Notebook
-            this._notes.push(new Note(item.id, item.title, item.content, new Date(item.createdTime),
+          for (let item of JSON.parse(result) as string[]) {
+            const note: Note = JSON.parse(item) as Note
+            const notebook = note.notebook
+            this._notes.push(new Note(note.id, note.title, note.content, new Date(note.createdTime),
               new Notebook(notebook.name, notebook.color)))
           }
         }

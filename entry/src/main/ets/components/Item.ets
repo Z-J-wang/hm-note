@@ -36,7 +36,7 @@ export struct Item {
     .padding(10)
     .borderStyle(BorderStyle.Solid)
     .borderWidth(1)
-    .borderColor(Color.Grey)
+    .borderColor(this.note.notebook.color)
     .justifyContent(FlexAlign.Start)
     .onClick(() => {
       const params: EditorParams = {

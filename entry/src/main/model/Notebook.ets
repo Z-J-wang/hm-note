@@ -28,4 +28,11 @@ export default class NoteBook {
   public set color(value: ResourceColor) {
     this._color = value
   }
+
+  public toString(): string {
+    return JSON.stringify({
+      name: this.name,
+      color: this.color
+    })
+  }
 }

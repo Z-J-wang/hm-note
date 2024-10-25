@@ -1,10 +1,5 @@
 import { Notebook } from '../model';
-import { DefaultNotebookList, KvmUtil } from '../utils';
-
-interface NotebookInterface {
-  name: string,
-  color: string
-}
+import { DefaultNotebookList, KvmUtil, toStringList } from '../utils';
 
 export default class Notebooks {
   // kv 的 key
@@ -29,12 +24,7 @@ export default class Notebooks {
     const newNotebooks = this._notebooks.slice() // 复制数组
     newNotebooks.push(notebook)
     try {
-      await KvmUtil.put(this._kvKey, JSON.stringify(newNotebooks.map(notebook => {
-        return {
-          name: notebook.name,
-          color: notebook.color
-        } as NotebookInterface
-      }))) // 更新数据到kv
+      await KvmUtil.put(this._kvKey, toStringList(newNotebooks)) // 更新数据到kv
       this._notebooks = newNotebooks
       return newNotebooks
     } catch (e) {
@@ -45,12 +35,7 @@ export default class Notebooks {
   public async delete(name: string) {
     try {
       const newNotebooks = this._notebooks.filter(notebook => notebook.name !== name) // 过滤出要删除的notebook
-      await KvmUtil.put(this._kvKey, JSON.stringify(newNotebooks.map(notebook => {
-        return {
-          name: notebook.name,
-          color: notebook.color
-        } as NotebookInterface
-      }))) // 更新数据到kv
+      await KvmUtil.put(this._kvKey, toStringList(newNotebooks)) // 更新数据到kv
       this._notebooks = newNotebooks // 覆盖_notebooks
       return newNotebooks
     } catch (e) {
@@ -66,8 +51,9 @@ export default class Notebooks {
         // 存储的数据类型错误，初始化数据库数据
         this._init()
       } else {
-        for (let item of JSON.parse(dataString) as Notebook[]) {
-          this._notebooks.push(new Notebook(item.name, item.color))
+        for (let item of JSON.parse(dataString) as string[]) {
+          const notebook = JSON.parse(item) as Notebook
+          this._notebooks.push(new Notebook(notebook.name, notebook.color))
         }
       }
       return this._notebooks
@@ -82,11 +68,6 @@ export default class Notebooks {
   private async _init() {
     // 读取defaultNotebookList并存入数据库
     const newNotebooks = DefaultNotebookList.defaultNotebookList
-    await KvmUtil.put(this._kvKey, JSON.stringify(newNotebooks.map(notebook => {
-      return {
-        name: notebook.name,
-        color: notebook.color
-      } as NotebookInterface
-    }))) // 更新数据到kv
+    await KvmUtil.put(this._kvKey, toStringList(newNotebooks)) // 更新数据到kv
   }
 }

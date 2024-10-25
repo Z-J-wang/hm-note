@@ -17,14 +17,14 @@ export struct NotebookSettingsDialog {
   @Builder
   ColorSettingsBuilder() {
     GridRow({ gutter: 10 }) {
-      ForEach(NotebookColors, (color: ResourceColor) => {
+      ForEach(NotebookColors.list, (color: ResourceColor) => {
         GridCol({
           span: 3
         }) {
           Text() {
             SymbolSpan($r('sys.symbol.folder'))
               .fontSize(20).fontWeight(FontWeight.Bold)
-          }.fontColor(color)
+          }.fontColor(color === Color.White ? Color.Grey : color)
         }
         .onClick(() => {
           console.log(color.toString())
@@ -40,7 +40,7 @@ export struct NotebookSettingsDialog {
 
   build() {
     Column() {
-      Text('这是自定义弹窗')
+      Text(this.note?.title)
         .fontSize(20)
         .fontWeight(FontWeight.Bold)
         .textAlign(TextAlign.Start)
@@ -61,9 +61,12 @@ export struct NotebookSettingsDialog {
 
               Column() {
                 Radio({ value: notebook.name, group: 'radioGroup' })
-                  .checked(true)
+                  .checked(notebook.name == this.note?.notebook.name)
                   .onChange((isChecked: boolean) => {
-                    console.log('Radio1 status is ' + isChecked)
+                    if (isChecked) {
+                      this.confirm(notebook)
+                    }
+                    this.controller.close()
                   })
               }
             }.justifyContent(FlexAlign.SpaceBetween).width('100%')
@@ -156,12 +159,6 @@ export struct NotebookSettingsDialog {
       }.margin({ top: 20, bottom: 20 })
       .width('100%')
 
-      Button('点我关闭弹窗')
-        .onClick(() => {
-          if (this.controller != undefined) {
-            this.controller.close()
-          }
-        })
     }.padding(20).width('100%')
   }
 }
