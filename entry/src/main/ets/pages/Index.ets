@@ -36,7 +36,7 @@ struct Index {
       notebooks: this.notebooks,
       note: this.noteOfNotebookSetting as Note
     }),
-    autoCancel: false,
+    autoCancel: true,
     offset: { dx: 0, dy: -10 },
     alignment: DialogAlignment.Bottom,
   })
@@ -57,7 +57,6 @@ struct Index {
   }
 
   onPageShow(): void {
-    console.log('12')
     this.loadNote()
     this.loadNotebook()
   }
@@ -78,7 +77,6 @@ struct Index {
         }.fontColor(Color.White)
       }.padding(6).backgroundColor('#5698c3').margin(4)
       .onClick(async () => {
-        // TODO 归纳相关逻辑
         // 更新notebook数据
         this.dialogController.open() // notebook数据更新后再打开NotebookSetting弹窗
         await this.loadNotebook()
