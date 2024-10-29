@@ -12,6 +12,7 @@ struct Index {
   @State message: string = 'Hello World';
   @State notebooks: Notebook[] = []
   @State notes: Note[] = []
+  @State searchKeyword: string = '' //
   @State value: string = ''
   noteOfNotebookSetting: Note | null = null // 正在进行归纳设置的note
   dialogController: CustomDialogController = new CustomDialogController({
@@ -44,7 +45,6 @@ struct Index {
   loadNote() {
     this.notes = []
     return NoteBll.getAll().then(notes => {
-      console.log(JSON.stringify(notes))
       this.notes = notes
     })
   }
@@ -53,6 +53,18 @@ struct Index {
     this.notebooks = []
     return NoteBookBll.getAll().then(notebooks => {
       this.notebooks = notebooks
+    })
+  }
+
+  filteredNotes(): Note[] {
+    if (!this.searchKeyword) {
+      // 查询关键字为空，直接返回 this.notes
+      return this.notes
+    }
+    return this.notes.filter((note: Note) => {
+      const tempString = note.title.toLowerCase() + ' ' + note.content.toLowerCase()
+      // TODO 优化点：命中关键字高亮
+      return tempString.includes(this.searchKeyword)
     })
   }
 
@@ -99,23 +111,36 @@ struct Index {
     }.padding(4).justifyContent(FlexAlign.SpaceEvenly)
   }
 
+  @Builder
+  SearchControl() {
+    Row() {
+      Search().onChange((value) => {
+        this.searchKeyword = value
+      })
+    }
+  }
+
   build() {
     Stack({ alignContent: Alignment.BottomEnd }) {
       Scroll() {
         Column() {
-          List({ space: 10 }) {
-            ForEach(this.notes, (note: Note) => {
-              ListItem() {
-                Item({ note: note })
-              }.swipeAction({
-                end: {
-                  builder: () => {
-                    this.itemEnd(note)
-                  },
-                }
+          this.SearchControl()
+
+          Row() {
+            List({ space: 10 }) {
+              ForEach(this.filteredNotes(), (note: Note) => {
+                ListItem() {
+                  Item({ note: note })
+                }.swipeAction({
+                  end: {
+                    builder: () => {
+                      this.itemEnd(note)
+                    },
+                  }
+                })
               })
-            })
-          }
+            }
+          }.flexShrink(1)
         }
         .alignItems(HorizontalAlign.Start)
         .width('100%')

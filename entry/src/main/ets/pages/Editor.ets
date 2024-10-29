@@ -63,7 +63,7 @@ struct Editor {
   onPageShow() {
     const params: EditorParams = router.getParams() as EditorParams
     this.loadNotebookOptions()
-    if (params.noteID) {
+    if (params?.noteID) {
       this.loadNote(params.noteID)
     }
   }
