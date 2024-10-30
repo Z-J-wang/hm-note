@@ -3,6 +3,7 @@ import NoteBll from '../../bll/Note.bll';
 import NoteBookBll from '../../bll/Notebook.bll';
 import { Item } from '../components/Item';
 import { router } from '@kit.ArkUI';
+import { SelectClassification } from '../components/SelectClassification';
 import { NotebookSettingsDialog } from '../components/NotebookSettingsDialog';
 import { JSON } from '@kit.ArkTS';
 
@@ -14,6 +15,8 @@ struct Index {
   @State notes: Note[] = []
   @State searchKeyword: string = '' //
   @State value: string = ''
+  @State selectedClassification: string = '' // 选择中的笔记类别
+  @State count: number = 0
   noteOfNotebookSetting: Note | null = null // 正在进行归纳设置的note
   dialogController: CustomDialogController = new CustomDialogController({
     builder: NotebookSettingsDialog({
@@ -57,15 +60,20 @@ struct Index {
   }
 
   filteredNotes(): Note[] {
-    if (!this.searchKeyword) {
-      // 查询关键字为空，直接返回 this.notes
-      return this.notes
-    }
-    return this.notes.filter((note: Note) => {
+    const filtered = this.notes.filter((note: Note) => {
       const tempString = note.title.toLowerCase() + ' ' + note.content.toLowerCase()
+
+      // 判断note是否属于选中的类别
+      const isInclude = this.selectedClassification ? this.selectedClassification === note.notebook.name : true
+
+      // 查询关键字为空，直接返回 this.notes
+      const includeKeyword = this.searchKeyword ? tempString.includes(this.searchKeyword) : true
+
       // TODO 优化点：命中关键字高亮
-      return tempString.includes(this.searchKeyword)
+      return includeKeyword && isInclude
     })
+    this.count = filtered.length
+    return filtered
   }
 
   onPageShow(): void {
@@ -114,8 +122,8 @@ struct Index {
   @Builder
   SearchControl() {
     Row() {
-      Search().onChange((value) => {
-        this.searchKeyword = value
+      Search({
+        placeholder: '搜索笔记'
       })
     }
   }
@@ -124,6 +132,14 @@ struct Index {
     Stack({ alignContent: Alignment.BottomEnd }) {
       Scroll() {
         Column() {
+          SelectClassification({
+            notebooks: this.notebooks,
+            number: this.count,
+            change: (value) => {
+              this.selectedClassification = value
+            }
+          })
+
           this.SearchControl()
 
           Row() {
