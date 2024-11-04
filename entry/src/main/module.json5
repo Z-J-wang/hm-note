@@ -30,6 +30,38 @@
             "actions": [
               "action.system.home"
             ]
+          },
+          {
+            "actions": [
+              "ohos.want.action.sendData"
+            ],
+            "uris": [
+              {
+                "scheme": "file",
+                "utd": "general.text",
+                "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "general.png",
+                "maxFileSupported": 1
+              },
+              {
+                "scheme": "file",
+                "utd": "general.jpeg",
+                "maxFileSupported": 1
+              }
+            ]
+          },
+          {
+            "actions": [
+              "ohos.want.action.viewData"
+            ],
+            "uris": [
+              {
+                "scheme": "file"
+              },
+            ]
           }
         ]
       }

@@ -4,6 +4,7 @@ import { window } from '@kit.ArkUI';
 import { distributedKVStore } from '@kit.ArkData';
 import { BusinessError } from '@kit.BasicServicesKit';
 import KvmUtil from '../../utils/KvmUtil';
+import { fileIo as fs } from '@kit.CoreFileKit';
 
 /**
  * 创建KVManager实例并创建获取数据库
@@ -45,9 +46,38 @@ const createKvm = (context: common.UIAbilityContext) => {
   }
 }
 
+function getShareFile(want: Want) {
+  try {
+    console.info('Test:', JSON.stringify(want));
+
+    // 从want信息中获取uri字段
+    let uri = want.uri;
+    if (uri == null || uri == undefined) {
+      console.info('uri is invalid');
+      return;
+    }
+    try {
+      // 根据需要对被分享文件的URI进行相应操作。例如读写的方式打开URI获取file对象
+      let file = fs.openSync(uri, fs.OpenMode.READ_WRITE);
+      console.info('open file successfully!');
+    } catch (err) {
+      let error: BusinessError = err as BusinessError;
+      console.error(`Invoke openSync failed, code is ${error.code}, message is ${error.message}`);
+    }
+  } catch (error) {
+    let err: BusinessError = error as BusinessError;
+    console.error(`Invoke openSync failed, code is ${err.code}, message is ${err.message}`);
+  }
+}
+
 export default class EntryAbility extends UIAbility {
+  onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    getShareFile(want)
+  }
+
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     let context = this.context;
+    getShareFile(want)
     createKvm(context)
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
   }
